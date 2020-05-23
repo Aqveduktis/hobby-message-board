@@ -56,6 +56,17 @@ app.get('/', (req, res) => {
   res.send('Hello world')
 })
 
+app.get('/users', async (req, res)=>{
+  const users = await User.find()
+  const result = {}
+  if (users.length){
+    res.status(200).json(users)
+  }
+  else {
+    res.status(404).json({message:"no users found"})
+  }
+  
+})
 // Create user  - sign up
 app.post('/users', async (req, res) => {
   try {
@@ -72,7 +83,8 @@ app.post('/users', async (req, res) => {
 app.get('/users/:id', authenticateUser)
 app.get('/users/:id', (req, res) => {
   try {
-    res.status(201).json(req.user)
+    const result = {loggedIn:true, name:req.user.name}
+    res.status(201).json(result)
   } catch (err) {
     res.status(400).json({message: 'could not save user', errors: err.errors})
   }
